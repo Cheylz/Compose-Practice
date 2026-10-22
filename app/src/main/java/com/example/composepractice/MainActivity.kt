@@ -13,11 +13,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.composepractice.ui.theme.ComposePracticeTheme
@@ -29,9 +29,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposePracticeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    //NameList(modifier = Modifier.padding(innerPadding))
-                    //Books(modifier = Modifier.padding(innerPadding))
+
                     BookList(modifier = Modifier.padding(innerPadding))
+
                 }
             }
         }
@@ -46,17 +46,16 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     )
 }
 
-@Composable
-fun NameList(modifier: Modifier = Modifier)
-{
-    val elements = (1..100).map {"Элемент $it"}
-    LazyColumn(modifier = modifier)
-    {
-        items(elements) {
-            element -> Text(text = element, modifier = Modifier.padding(16.dp))
-        }
-    }
-}
+//@Composable ПРИМЕР LazyColumn
+//fun NameList(modifier: Modifier = Modifier) {
+//    val elements = (1..100).map { "Элемент $it" }
+//    LazyColumn(modifier = modifier)
+//    {
+//        items(elements) { element ->
+//            Text(text = element, modifier = Modifier.padding(16.dp))
+//        }
+//    }
+//}
 
 data class Book(val title: String, val author: String)
 
@@ -70,44 +69,38 @@ fun BookItem(book: Book)
 }
 
 @Composable
-fun BookList(modifier: Modifier = Modifier)
-{
-    val books = remember{mutableListOf(
-        Book("Мастер и Маргарита", "Михаил Булгаков"),
-        Book("Гордость и предубеждение", "Джейн Остин"),
-    )
+fun BookList(modifier: Modifier = Modifier) {
+    val books = remember {
+        mutableStateListOf(
+            Book("Мастер и Маргарита", "Михаил Булгаков"),
+            Book("Гордость и предубеждение", "Джейн Остин"),
+        )
     }
-  
-    LazyColumn(modifier = modifier) {
-        items(books) { book -> BookItem(book) }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+
+        Button(
+            onClick = { books.add(Book("Новая книга ${books.size + 1}", "Автор")) },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        {
+            Text("Добавить")
+        }
+        Button(
+            onClick = { books.removeLastOrNull() },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        {
+            Text("Удалить")
+        }
+
+
+        LazyColumn {
+            items(books) { book -> BookItem(book) }
+        }
     }
 }
-
-
-
-//fun Books(modifier: Modifier = Modifier)
-//{
-//
-//
-//    val book1 = Book("Мастер и Маргарита", "Булгаков")
-//    val book2 = Book("Гордость и предубеждение", "Джейн Остин")
-//    val book3 = Book("Граф Монте-Кристо", "Александр Дюма")
-//    val book4 = Book("Сто лет одиночества", "Габриэль Гарсиа Маркес")
-//    val book5 = Book("Бойцовский Клуб", "Чак Паланик")
-//
-//    val listBook = listOf(book1,book2,book3,book4,book5)
-//
-//    Column {
-//        listBook.forEach { book -> Text(text = "${book.title} - ${book.author}") }
-//
-//    }
-//
-//    LazyColumn(modifier = modifier){
-//        items(listBook)
-//        {
-//            books -> Text(text = "${books.title} - ${books.author}")
-//        }
-//    }
-//}
-
-
